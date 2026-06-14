@@ -10,6 +10,7 @@ import trinity.Reference;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.*;
 
 public class TrinityConfig {
 	
@@ -30,6 +31,9 @@ public class TrinityConfig {
 	private static int cust2 = 100 / 2;
 	private static int cust3 = 100 / 2;
 	private static int cust4 = 100 / 2;
+	private static int custom_count = 4;
+	private static int custom_nuke_default_radius = 100 / 2;
+	private static String[] custom_nuke_default_ids = new String[] {"custom_1", "custom_2", "custom_3", "custom_4"};
 	private static int icbm = 100 / 2;
 	private static int anti = 50 / 2;
 	private static int max = 1000;
@@ -73,6 +77,12 @@ public class TrinityConfig {
 	public static int custom_3_radius;
 	
 	public static int custom_4_radius;
+	
+	public static int[] custom_nuke_radii = new int[0];
+	
+	public static int custom_nuke_count;
+	
+	public static String[] custom_nuke_ids = new String[0];
 	
 	public static int antimatter_radius;
 	
@@ -133,6 +143,12 @@ public class TrinityConfig {
 		Property propertyCustom = config.get(CATEGORY_NAME_OTHER, "custom_nukes", (custom), Lang.localize("gui.config.nuke.custom_nukes.comment"));
 		propertyCustom.setLanguageKey("gui.config.nuke.custom_nukes");
 		
+		Property propertyCustomCount = config.get(CATEGORY_NAME_OTHER, "custom_nuke_count", custom_count, Lang.localize("gui.config.nuke.custom_nuke_count.comment"), 0, Integer.MAX_VALUE);
+		propertyCustomCount.setLanguageKey("gui.config.nuke.custom_nuke_count");
+		
+		Property propertyCustomIds = config.get(CATEGORY_NAME_OTHER, "custom_nuke_ids", getDefaultCustomIds(propertyCustomCount.getInt()), Lang.localize("gui.config.nuke.custom_nuke_ids.comment"));
+		propertyCustomIds.setLanguageKey("gui.config.nuke.custom_nuke_ids");
+		
 		Property propertyThermonuclear = config.get(CATEGORY_NAME_OTHER, "thermonuclear", (thermo), Lang.localize("gui.config.nuke.thermonuclear.comment"));
 		propertyThermonuclear.setLanguageKey("gui.config.nuke.thermonuclear");
 		
@@ -184,6 +200,11 @@ public class TrinityConfig {
 		Property propertyCustom4Radius = config.get(CATEGORY_NAME_OTHER, "custom4_radius", (cust4), Lang.localize("gui.config.nuke.cust4_radius.comment"), 1, Integer.MAX_VALUE);
 		propertyCustom4Radius.setLanguageKey("gui.config.nuke.cust4_radius");
 		
+		int[] legacyCustomRadii = readCustomRadiusValues(getCustomRadiusProperties(propertyCustomCount.getInt(), propertyCustom1Radius, propertyCustom2Radius, propertyCustom3Radius, propertyCustom4Radius));
+		int customCount = propertyCustomIds.getStringList().length;
+		Property propertyCustomRadii = config.get(CATEGORY_NAME_OTHER, "custom_nuke_radii", getDefaultCustomRadii(customCount, legacyCustomRadii), Lang.localize("gui.config.nuke.custom_nuke_radii.comment"), 1, Integer.MAX_VALUE);
+		propertyCustomRadii.setLanguageKey("gui.config.nuke.custom_nuke_radii");
+		
 		Property propertyICBMRadius = config.get(CATEGORY_NAME_OTHER, "icbm_radius", (icbm), Lang.localize("gui.config.nuke.icbm_radius.comment"), 1, Integer.MAX_VALUE);
 		propertyICBMRadius.setLanguageKey("gui.config.nuke.icbm_radius");
 		
@@ -207,6 +228,7 @@ public class TrinityConfig {
 		
 		if (setFromConfig) {
 			custom_nukes = propertyCustom.getBoolean();
+			custom_nuke_count = propertyCustomCount.getInt();
 			lava_gen = propertyLava.getBoolean();
 			thermonuclear = propertyThermonuclear.getBoolean();
 			fallout_rendering = propertyFalloutRender.getBoolean();
@@ -221,10 +243,12 @@ public class TrinityConfig {
 			bk248_radius = propertyBk248Radius.getInt();
 			cf249_radius = propertyCf249Radius.getInt();
 			cf251_radius = propertyCf251Radius.getInt();
-			custom_1_radius = propertyCustom1Radius.getInt();
-			custom_2_radius = propertyCustom2Radius.getInt();
-			custom_3_radius = propertyCustom3Radius.getInt();
-			custom_4_radius = propertyCustom4Radius.getInt();
+			custom_nuke_ids = readCustomIds(propertyCustomIds.getStringList());
+			custom_nuke_radii = readCustomRadii(propertyCustomRadii.getIntList(), custom_nuke_ids.length, legacyCustomRadii);
+			custom_1_radius = getCustomNukeRadius(1);
+			custom_2_radius = getCustomNukeRadius(2);
+			custom_3_radius = getCustomNukeRadius(3);
+			custom_4_radius = getCustomNukeRadius(4);
 			icbm_radius = propertyICBMRadius.getInt();
 			antimatter_radius = propertyAntimatterRadius.getInt();
 			max_radius = propertyMaxRadius.getInt();
@@ -232,6 +256,8 @@ public class TrinityConfig {
 			// capacity = propertyCapacity.getInt();
 		}
 		propertyCustom.set(custom_nukes);
+		propertyCustomCount.set(custom_nuke_ids.length);
+		propertyCustomIds.set(custom_nuke_ids);
 		propertyLava.set(lava_gen);
 		propertyThermonuclear.set(thermonuclear);
 		propertyFalloutRender.set(fallout_rendering);
@@ -246,10 +272,7 @@ public class TrinityConfig {
 		propertyBk248Radius.set(bk248_radius);
 		propertyCf249Radius.set(cf249_radius);
 		propertyCf251Radius.set(cf251_radius);
-		propertyCustom1Radius.set(custom_1_radius);
-		propertyCustom2Radius.set(custom_2_radius);
-		propertyCustom3Radius.set(custom_3_radius);
-		propertyCustom4Radius.set(custom_4_radius);
+		propertyCustomRadii.set(custom_nuke_radii);
 		propertyICBMRadius.set(icbm_radius);
 		propertyAntimatterRadius.set(antimatter_radius);
 		propertyMaxRadius.set(max_radius);
@@ -259,6 +282,112 @@ public class TrinityConfig {
 		if (config.hasChanged())
 			config.save();
 		
+	}
+	
+	private static String[] getDefaultCustomIds(int configuredCustomCount) {
+		int customCount = Math.max(4, configuredCustomCount);
+		String[] ids = new String[customCount];
+		for (int i = 0; i < customCount; i++) {
+			ids[i] = i < custom_nuke_default_ids.length ? custom_nuke_default_ids[i] : "custom_" + (i + 1);
+		}
+		return ids;
+	}
+	
+	private static int[] getDefaultCustomRadii(int configuredCustomCount, int[] legacyCustomRadii) {
+		int customCount = configuredCustomCount;
+		int[] radii = new int[customCount];
+		for (int i = 0; i < customCount; i++) {
+			radii[i] = i < legacyCustomRadii.length ? legacyCustomRadii[i] : custom_nuke_default_radius;
+		}
+		return radii;
+	}
+	
+	private static String[] readCustomIds(String[] configuredIds) {
+		int customCount = configuredIds.length;
+		String[] ids = new String[customCount];
+		Set<String> usedIds = new HashSet<String>();
+		for (int i = 0; i < customCount; i++) {
+			String fallback = i < custom_nuke_default_ids.length ? custom_nuke_default_ids[i] : "custom_" + (i + 1);
+			String rawId = i < configuredIds.length ? configuredIds[i] : fallback;
+			String id = sanitizeCustomId(rawId, fallback);
+			if (usedIds.contains(id)) {
+				id = fallback;
+			}
+			while (usedIds.contains(id)) {
+				id = id + "_" + (i + 1);
+			}
+			ids[i] = id;
+			usedIds.add(id);
+		}
+		return ids;
+	}
+	
+	private static String sanitizeCustomId(String rawId, String fallback) {
+		String id = rawId == null ? "" : rawId.trim().toLowerCase(Locale.ROOT);
+		id = id.replaceAll("^_+", "");
+		id = id.replaceAll("[^a-z0-9_]", "_");
+		id = id.replaceAll("_+", "_");
+		id = id.replaceAll("^_+|_+$", "");
+		return id.isEmpty() ? fallback : id;
+	}
+	
+	private static int[] readCustomRadii(int[] configuredRadii, int customCount, int[] legacyCustomRadii) {
+		int[] radii = new int[customCount];
+		for (int i = 0; i < customCount; i++) {
+			if (i < configuredRadii.length) {
+				radii[i] = Math.max(1, configuredRadii[i]);
+			}
+			else if (i < legacyCustomRadii.length) {
+				radii[i] = Math.max(1, legacyCustomRadii[i]);
+			}
+			else {
+				radii[i] = custom_nuke_default_radius;
+			}
+		}
+		return radii;
+	}
+	
+	private static Property[] getCustomRadiusProperties(int configuredCustomCount, Property propertyCustom1Radius, Property propertyCustom2Radius, Property propertyCustom3Radius, Property propertyCustom4Radius) {
+		int customCount = Math.max(4, configuredCustomCount);
+		Pattern customRadiusPattern = Pattern.compile("custom(\\d+)_radius");
+		ConfigCategory category = config.getCategory(CATEGORY_NAME_OTHER);
+		for (String propertyName : category.keySet()) {
+			Matcher matcher = customRadiusPattern.matcher(propertyName);
+			if (matcher.matches()) {
+				customCount = Math.max(customCount, Integer.parseInt(matcher.group(1)));
+			}
+		}
+		
+		Property[] properties = new Property[customCount];
+		properties[0] = propertyCustom1Radius;
+		properties[1] = propertyCustom2Radius;
+		properties[2] = propertyCustom3Radius;
+		properties[3] = propertyCustom4Radius;
+		for (int i = 4; i < customCount; i++) {
+			int customIndex = i + 1;
+			Property property = config.get(CATEGORY_NAME_OTHER, "custom" + customIndex + "_radius", custom_nuke_default_radius, Lang.localize("gui.config.nuke.custom_radius.comment"), 1, Integer.MAX_VALUE);
+			property.setLanguageKey("gui.config.nuke.custom_radius");
+			properties[i] = property;
+		}
+		return properties;
+	}
+	
+	private static int[] readCustomRadiusValues(Property[] customRadiusProperties) {
+		int[] values = new int[customRadiusProperties.length];
+		for (int i = 0; i < customRadiusProperties.length; i++) {
+			values[i] = customRadiusProperties[i].getInt();
+		}
+		return values;
+	}
+	
+	public static int getCustomNukeRadius(int customIndex) {
+		if (custom_nuke_radii == null || custom_nuke_radii.length == 0) {
+			return custom_nuke_default_radius;
+		}
+		if (customIndex < 1 || customIndex > custom_nuke_radii.length) {
+			return custom_nuke_default_radius;
+		}
+		return custom_nuke_radii[customIndex - 1];
 	}
 	
 	private static double[] readDoubleArrayFromConfig(Property property) {

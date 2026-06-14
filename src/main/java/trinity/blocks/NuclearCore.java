@@ -26,6 +26,7 @@ public class NuclearCore extends Block {
 	public int blastRadius;
 	
 	public boolean salted;
+	private String displayName;
 	
 	public NuclearCore(String nameIn, Material material, int blastRadius, boolean salted) {
 		super(material);
@@ -36,6 +37,16 @@ public class NuclearCore extends Block {
 		setHarvestLevel("pickaxe", 1);
 		setSoundType(blockSoundType.METAL);
 		this.setHardness(2F);
+	}
+	
+	public NuclearCore setDisplayName(String displayName) {
+		this.displayName = displayName;
+		return this;
+	}
+	
+	@Override
+	public String getLocalizedName() {
+		return displayName != null ? displayName : super.getLocalizedName();
 	}
 	
 	@Override

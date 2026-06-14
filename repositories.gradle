@@ -26,10 +26,6 @@ repositories {
 		url "https://mod-buildcraft.com/maven/"
 	}
 	maven {
-		name = "mcmoddev"
-		url = "https://maven.mcmoddev.com"
-	}
-	maven {
 		name = "ModMaven"
 		url = "https://modmaven.dev/"
 	}

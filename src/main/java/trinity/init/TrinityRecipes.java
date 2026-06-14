@@ -138,15 +138,10 @@ public class TrinityRecipes {
 		CraftingRecipeHandler.addShapelessOreRecipe(new ItemStack(ModBlocks.gold_bomb, 1, 0), Blocks.TNT, "ingotGold198");
 		GameRegistry.addSmelting(ModItems.dust_au_198, new ItemStack(ModItems.ingot_au_198, 1, 0), 0);
 		if (TrinityConfig.custom_nukes) {
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.bomb_custom1, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.core_custom_1});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.bomb_custom2, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.core_custom_2});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.bomb_custom3, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.core_custom_3});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.bomb_custom4, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.core_custom_4});
-			
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.salted_bomb_custom1, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.salted_core_custom_1});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.salted_bomb_custom2, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.salted_core_custom_2});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.salted_bomb_custom3, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.salted_core_custom_3});
-			CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.salted_bomb_custom4, 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.salted_core_custom_4});
+			for (int i = 0; i < ModBlocks.bomb_custom.length; i++) {
+				CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.bomb_custom[i], 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.core_custom[i]});
+				CraftingRecipeHandler.addShapedOreRecipe(new ItemStack(ModBlocks.salted_bomb_custom[i], 1, 0), new Object[] {"CCC", "CNC", "CCC", 'C', ModBlocks.compression_charge, 'N', ModBlocks.salted_core_custom[i]});
+			}
 		}
 		NCRecipes.melter.addRecipe(Blocks.TNT, fluidStack("tnt", FluidStackHelper.BUCKET_VOLUME), 1D, 1D);
 		NCRecipes.pressurizer.addRecipe(ModItems.gem_dust_witherite, ModItems.gem_witherite, 1D, 1D);

@@ -3,7 +3,9 @@ package trinity.init;
 import nc.config.NCConfig;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.*;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +32,7 @@ public class ModBlocks {
 	public static Block core_custom_2;
 	public static Block core_custom_3;
 	public static Block core_custom_4;
+	public static Block[] core_custom = new Block[0];
 	
 	public static Block salted_core_u233;
 	public static Block salted_core_u235;
@@ -44,6 +47,7 @@ public class ModBlocks {
 	public static Block salted_core_custom_2;
 	public static Block salted_core_custom_3;
 	public static Block salted_core_custom_4;
+	public static Block[] salted_core_custom = new Block[0];
 	
 	// public static Block thermonuclear_core_u233;
 	// public static Block thermonuclear_core_u235;
@@ -68,6 +72,7 @@ public class ModBlocks {
 	public static Block bomb_custom2;
 	public static Block bomb_custom3;
 	public static Block bomb_custom4;
+	public static Block[] bomb_custom = new Block[0];
 	public static Block bomb_antimatter;
 	// public static Block bomb_wormhole;
 	
@@ -84,6 +89,7 @@ public class ModBlocks {
 	public static Block salted_bomb_custom2;
 	public static Block salted_bomb_custom3;
 	public static Block salted_bomb_custom4;
+	public static Block[] salted_bomb_custom = new Block[0];
 	
 	public static Block dirty_bomb;
 	public static Block fusion_bomb;
@@ -119,11 +125,6 @@ public class ModBlocks {
 		salted_core_bk248 = new BasicBlock("salted_core_bk248", Material.IRON);
 		salted_core_cf249 = new BasicBlock("salted_core_cf249", Material.IRON);
 		salted_core_cf251 = new BasicBlock("salted_core_cf251", Material.IRON);
-		salted_core_custom_1 = new BasicBlock("salted_core_custom_1", Material.IRON);
-		salted_core_custom_2 = new BasicBlock("salted_core_custom_2", Material.IRON);
-		salted_core_custom_3 = new BasicBlock("salted_core_custom_3", Material.IRON);
-		salted_core_custom_4 = new BasicBlock("salted_core_custom_4", Material.IRON);
-		
 		core_u233 = new BasicBlock("core_u233", Material.IRON);
 		core_u235 = new BasicBlock("core_u235", Material.IRON);
 		core_np237 = new BasicBlock("core_np237", Material.IRON);
@@ -133,10 +134,7 @@ public class ModBlocks {
 		core_bk248 = new BasicBlock("core_bk248", Material.IRON);
 		core_cf249 = new BasicBlock("core_cf249", Material.IRON);
 		core_cf251 = new BasicBlock("core_cf251", Material.IRON);
-		core_custom_1 = new BasicBlock("core_custom_1", Material.IRON);
-		core_custom_2 = new BasicBlock("core_custom_2", Material.IRON);
-		core_custom_3 = new BasicBlock("core_custom_3", Material.IRON);
-		core_custom_4 = new BasicBlock("core_custom_4", Material.IRON);
+		initCustomNukes();
 		
 		thermonuclear_core_pu239 = new ThermonuclearCore("thermonuclear_core_pu239", Material.IRON);
 		
@@ -155,10 +153,6 @@ public class ModBlocks {
 		bomb_bk248 = new NuclearCore("bomb_bk248", Material.IRON, TrinityConfig.bk248_radius, false);
 		bomb_cf249 = new NuclearCore("bomb_cf249", Material.IRON, TrinityConfig.cf249_radius, false);
 		bomb_cf251 = new NuclearCore("bomb_cf251", Material.IRON, TrinityConfig.cf251_radius, false);
-		bomb_custom1 = new NuclearCore("bomb_custom_1", Material.IRON, TrinityConfig.custom_1_radius, false);
-		bomb_custom2 = new NuclearCore("bomb_custom_2", Material.IRON, TrinityConfig.custom_2_radius, false);
-		bomb_custom3 = new NuclearCore("bomb_custom_3", Material.IRON, TrinityConfig.custom_3_radius, false);
-		bomb_custom4 = new NuclearCore("bomb_custom_4", Material.IRON, TrinityConfig.custom_4_radius, false);
 		bomb_antimatter = new AntimatterBomb("bomb_antimatter", Material.IRON, TrinityConfig.antimatter_radius);
 		// bomb_wormhole = new ExoticBomb("bomb_exotic", Material.IRON, TrinityConfig.antimatter_radius);
 		
@@ -171,11 +165,6 @@ public class ModBlocks {
 		salted_bomb_bk248 = new NuclearCore("salted_bomb_bk248", Material.IRON, TrinityConfig.bk248_radius, true);
 		salted_bomb_cf249 = new NuclearCore("salted_bomb_cf249", Material.IRON, TrinityConfig.cf249_radius, true);
 		salted_bomb_cf251 = new NuclearCore("salted_bomb_cf251", Material.IRON, TrinityConfig.cf251_radius, true);
-		salted_bomb_custom1 = new NuclearCore("salted_bomb_custom_1", Material.IRON, TrinityConfig.custom_1_radius, false);
-		salted_bomb_custom2 = new NuclearCore("salted_bomb_custom_2", Material.IRON, TrinityConfig.custom_2_radius, false);
-		salted_bomb_custom3 = new NuclearCore("salted_bomb_custom_3", Material.IRON, TrinityConfig.custom_3_radius, false);
-		salted_bomb_custom4 = new NuclearCore("salted_bomb_custom_4", Material.IRON, TrinityConfig.custom_4_radius, false);
-		
 		trinitite = new BasicBlock("trinitite", Material.ROCK);
 		solid_trinitite = new BasicBlock("solid_trinitite", Material.GLASS);
 		radioactive_earth = new RadioactiveBlock("radioactive_earth", Material.ROCK);
@@ -198,10 +187,9 @@ public class ModBlocks {
 		core_bk248.setCreativeTab(null);
 		core_cf249.setCreativeTab(null);
 		core_cf251.setCreativeTab(null);
-		core_custom_1.setCreativeTab(null);
-		core_custom_2.setCreativeTab(null);
-		core_custom_3.setCreativeTab(null);
-		core_custom_4.setCreativeTab(null);
+		for (Block block : core_custom) {
+			block.setCreativeTab(null);
+		}
 		
 		salted_core_u233.setCreativeTab(null);
 		salted_core_u235.setCreativeTab(null);
@@ -212,10 +200,9 @@ public class ModBlocks {
 		salted_core_bk248.setCreativeTab(null);
 		salted_core_cf249.setCreativeTab(null);
 		salted_core_cf251.setCreativeTab(null);
-		salted_core_custom_1.setCreativeTab(null);
-		salted_core_custom_2.setCreativeTab(null);
-		salted_core_custom_3.setCreativeTab(null);
-		salted_core_custom_4.setCreativeTab(null);
+		for (Block block : salted_core_custom) {
+			block.setCreativeTab(null);
+		}
 		
 		thermonuclear_core_pu239.setCreativeTab(TrinityTab.TRINITY_TAB);
 		
@@ -240,15 +227,12 @@ public class ModBlocks {
 		bomb_cf249.setCreativeTab(TrinityTab.TRINITY_TAB);
 		bomb_cf251.setCreativeTab(TrinityTab.TRINITY_TAB);
 		if (TrinityConfig.custom_nukes) {
-			bomb_custom1.setCreativeTab(TrinityTab.TRINITY_TAB);
-			bomb_custom2.setCreativeTab(TrinityTab.TRINITY_TAB);
-			bomb_custom3.setCreativeTab(TrinityTab.TRINITY_TAB);
-			bomb_custom4.setCreativeTab(TrinityTab.TRINITY_TAB);
-			
-			salted_bomb_custom1.setCreativeTab(TrinityTab.TRINITY_TAB);
-			salted_bomb_custom2.setCreativeTab(TrinityTab.TRINITY_TAB);
-			salted_bomb_custom3.setCreativeTab(TrinityTab.TRINITY_TAB);
-			salted_bomb_custom4.setCreativeTab(TrinityTab.TRINITY_TAB);
+			for (Block block : bomb_custom) {
+				block.setCreativeTab(TrinityTab.TRINITY_TAB);
+			}
+			for (Block block : salted_bomb_custom) {
+				block.setCreativeTab(TrinityTab.TRINITY_TAB);
+			}
 		}
 		bomb_antimatter.setCreativeTab(TrinityTab.TRINITY_TAB);
 		
@@ -267,6 +251,45 @@ public class ModBlocks {
 		salted_sand.setCreativeTab(TrinityTab.TRINITY_TAB);
 		radioactive_earth.setCreativeTab(TrinityTab.TRINITY_TAB);
 		radioactive_earth2.setCreativeTab(TrinityTab.TRINITY_TAB);
+	}
+	
+	private static void initCustomNukes() {
+		int customCount = TrinityConfig.custom_nuke_radii.length;
+		core_custom = new Block[customCount];
+		salted_core_custom = new Block[customCount];
+		bomb_custom = new Block[customCount];
+		salted_bomb_custom = new Block[customCount];
+		
+		for (int i = 0; i < customCount; i++) {
+			int customIndex = i + 1;
+			int radius = TrinityConfig.getCustomNukeRadius(customIndex);
+			String customId = TrinityConfig.custom_nuke_ids[i];
+			core_custom[i] = new BasicBlock("core_" + customId, Material.IRON).setDisplayName("Custom Fission Bomb Core (" + customId + ")");
+			salted_core_custom[i] = new BasicBlock("salted_core_" + customId, Material.IRON).setDisplayName("Salted Custom Fission Bomb Core (" + customId + ")");
+			bomb_custom[i] = new NuclearCore("bomb_" + customId, Material.IRON, radius, false).setDisplayName("Custom Fission Bomb (" + customId + ")");
+			salted_bomb_custom[i] = new NuclearCore("salted_bomb_" + customId, Material.IRON, radius, true).setDisplayName("Salted Custom Fission Bomb (" + customId + ")");
+		}
+		
+		core_custom_1 = getCustomBlock(core_custom, 1);
+		core_custom_2 = getCustomBlock(core_custom, 2);
+		core_custom_3 = getCustomBlock(core_custom, 3);
+		core_custom_4 = getCustomBlock(core_custom, 4);
+		salted_core_custom_1 = getCustomBlock(salted_core_custom, 1);
+		salted_core_custom_2 = getCustomBlock(salted_core_custom, 2);
+		salted_core_custom_3 = getCustomBlock(salted_core_custom, 3);
+		salted_core_custom_4 = getCustomBlock(salted_core_custom, 4);
+		bomb_custom1 = getCustomBlock(bomb_custom, 1);
+		bomb_custom2 = getCustomBlock(bomb_custom, 2);
+		bomb_custom3 = getCustomBlock(bomb_custom, 3);
+		bomb_custom4 = getCustomBlock(bomb_custom, 4);
+		salted_bomb_custom1 = getCustomBlock(salted_bomb_custom, 1);
+		salted_bomb_custom2 = getCustomBlock(salted_bomb_custom, 2);
+		salted_bomb_custom3 = getCustomBlock(salted_bomb_custom, 3);
+		salted_bomb_custom4 = getCustomBlock(salted_bomb_custom, 4);
+	}
+	
+	private static Block getCustomBlock(Block[] blocks, int customIndex) {
+		return customIndex <= blocks.length ? blocks[customIndex - 1] : null;
 	}
 	
 	public static void register() {
@@ -332,25 +355,10 @@ public class ModBlocks {
 		registerBlock(solid_trinitite);
 		
 		if (TrinityConfig.custom_nukes) {
-			registerBlock(core_custom_1);
-			registerBlock(core_custom_2);
-			registerBlock(core_custom_3);
-			registerBlock(core_custom_4);
-			
-			registerBlock(salted_core_custom_1);
-			registerBlock(salted_core_custom_2);
-			registerBlock(salted_core_custom_3);
-			registerBlock(salted_core_custom_4);
-			
-			registerBlock(bomb_custom1);
-			registerBlock(bomb_custom2);
-			registerBlock(bomb_custom3);
-			registerBlock(bomb_custom4);
-			
-			registerBlock(salted_bomb_custom1);
-			registerBlock(salted_bomb_custom2);
-			registerBlock(salted_bomb_custom3);
-			registerBlock(salted_bomb_custom4);
+			registerBlocks(core_custom);
+			registerBlocks(salted_core_custom);
+			registerBlocks(bomb_custom);
+			registerBlocks(salted_bomb_custom);
 		}
 	}
 	
@@ -414,30 +422,38 @@ public class ModBlocks {
 		registerRender(salted_sand2);
 		
 		if (TrinityConfig.custom_nukes) {
-			registerRender(core_custom_1);
-			registerRender(core_custom_2);
-			registerRender(core_custom_3);
-			registerRender(core_custom_4);
-			
-			registerRender(salted_core_custom_1);
-			registerRender(salted_core_custom_2);
-			registerRender(salted_core_custom_3);
-			registerRender(salted_core_custom_4);
-			
-			registerRender(bomb_custom1);
-			registerRender(bomb_custom2);
-			registerRender(bomb_custom3);
-			registerRender(bomb_custom4);
-			
-			registerRender(salted_bomb_custom1);
-			registerRender(salted_bomb_custom2);
-			registerRender(salted_bomb_custom3);
-			registerRender(salted_bomb_custom4);
+			registerRenders(core_custom, "core_custom_1");
+			registerRenders(salted_core_custom, "salted_core_custom_1");
+			registerRenders(bomb_custom, "bomb_custom_1");
+			registerRenders(salted_bomb_custom, "salted_bomb_custom_1");
+		}
+	}
+	
+	private static void registerBlocks(Block[] blocks) {
+		for (Block block : blocks) {
+			registerBlock(block);
+		}
+	}
+	
+	private static void registerRenders(Block[] blocks, String modelName) {
+		for (Block block : blocks) {
+			registerRender(block, modelName);
 		}
 	}
 	
 	public static void registerRender(Block block) {
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+	}
+	
+	public static void registerRender(Block block, String modelName) {
+		ModelResourceLocation modelLocation = new ModelResourceLocation(Reference.MOD_ID + ":" + modelName, "normal");
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(Reference.MOD_ID + ":" + modelName, "inventory"));
+		ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
+			@Override
+			protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+				return modelLocation;
+			}
+		});
 	}
 	
 	public static void registerBlock(Block block) {

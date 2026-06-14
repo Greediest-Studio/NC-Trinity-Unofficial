@@ -12,6 +12,7 @@ import net.minecraft.world.IBlockAccess;
 import trinity.init.*;
 
 public class BasicBlock extends Block {
+	private String displayName;
 	
 	public BasicBlock(String nameIn, Material material) {
 		super(material);
@@ -21,6 +22,16 @@ public class BasicBlock extends Block {
 		// setSoundType(blockSoundType.GROUND);
 		this.setHardness(2F);
 		// this.setTickRandomly(true);
+	}
+	
+	public BasicBlock setDisplayName(String displayName) {
+		this.displayName = displayName;
+		return this;
+	}
+	
+	@Override
+	public String getLocalizedName() {
+		return displayName != null ? displayName : super.getLocalizedName();
 	}
 	
 	/*	@Override
