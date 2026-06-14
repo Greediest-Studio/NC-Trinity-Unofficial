@@ -423,7 +423,7 @@ public class ModBlocks {
 		
 		if (TrinityConfig.custom_nukes) {
 			registerRenders(core_custom, "core_custom_1");
-			registerRenders(salted_core_custom, "salted_core_custom_1");
+			registerRenders(salted_core_custom, "salted_core_u233");
 			registerRenders(bomb_custom, "bomb_custom_1");
 			registerRenders(salted_bomb_custom, "salted_bomb_custom_1");
 		}
