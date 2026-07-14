@@ -22,7 +22,6 @@ import trinity.config.TrinityConfig;
 import trinity.entities.*;
 import trinity.explosion.ExplosionNukeGeneric;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class ICBMEvents {
 	
 	@SubscribeEvent

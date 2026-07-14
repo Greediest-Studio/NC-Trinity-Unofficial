@@ -37,8 +37,8 @@ public class ClientProxy extends CommonProxy {
 		
 		TrinityConfig.clientPreInit();
 		
-		ModItems.registerRenders();
-		ModBlocks.registerRenders();
+		ModItemsClient.registerRenders();  
+		ModBlocksClient.registerRenders();
 		MinecraftForge.EVENT_BUS.register(new ClientEvents());
 		TrinityFluids.renderFluids();
 	}

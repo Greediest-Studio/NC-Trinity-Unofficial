@@ -9,8 +9,6 @@ import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.*;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.*;
@@ -21,17 +19,10 @@ import trinity.tiles.TileEntityShieldedContainer;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class ModEvents {
 	
 	private static boolean renderingNukeEffects = false;
 	public static String Pu_238 = "c95fdfd3-bea7-4255-a44b-d21bc3df95e3";
-	
-	@SubscribeEvent
-	public void textureStitch(TextureStitchEvent.Pre evt) {
-		evt.getMap().registerSprite(new ResourceLocation(Reference.MOD_ID, "blocks/liquid_still"));
-		evt.getMap().registerSprite(new ResourceLocation(Reference.MOD_ID, "blocks/liquid_flow"));
-	}
 	
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void sealedRadiationSources(TickEvent.PlayerTickEvent event) {
